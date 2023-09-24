@@ -67,7 +67,7 @@ int main()
 }
 ```
 
-- Foramtting library (`std::format`).
+- Formatting library (`std::format`).
 - `std::jthread` : joinable `std::thread`.
 - Synchronized Outputstreams (`std::osyncstream()`).
 - Mathematical Constants (`<numbers>` header).
