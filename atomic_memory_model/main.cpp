@@ -373,6 +373,95 @@ void relax_semantic()
         // and reading of the counter `count` in line 365.
     }
 
+    // relaxed operations have few ordering requirements
+    {
+        std::atomic<bool> x, y;
+        std::atomic<int> z;
+
+        auto write_x_then_y = [&]() {
+            x.store(true, std::memory_order_relaxed); // 1
+            y.store(true, std::memory_order_relaxed); // 2
+        };
+        auto read_y_then_x = [&]() {
+            while (!y.load(std::memory_order_relaxed)); // 3
+            if (x.load(std::memory_order_relaxed)) // 4
+                ++z;
+        };
+
+        x = false;
+        y = false;
+        z = 0;
+        std::thread t1(write_x_then_y);
+        std::thread t2(read_y_then_x);
+        t1.join(); t2.join();
+        assert(z.load() != 0);
+
+        // The assertion can fire, because the load of `x` (line 386) can read `false`,
+        // even though the load of `y` reads `true` and the store of `x` happends
+        // before the store of `y`.
+        // `x` and `y` are different variables, so there are no ordering guarantees relating to
+        // values arising from operations on each.
+    }
+
+    // Relaxed operations on multiple threads
+    {
+        struct read_values {
+            int x{}, y{}, z{};
+        };
+        std::atomic<int> x{0}, y{0}, z{0};
+        std::atomic<bool> go{false};
+        unsigned int const loop_count = 10;
+        read_values values1[loop_count];
+        read_values values2[loop_count];
+        read_values values3[loop_count];
+        read_values values4[loop_count];
+        read_values values5[loop_count];
+
+        auto increment = [&](std::atomic<int>* var_to_inc, read_values* values) {
+            while (!go)
+                std::this_thread::yield();
+            for (unsigned int i = 0; i < loop_count; i++) {
+                values[i].x = x.load(std::memory_order_relaxed);
+                values[i].y = y.load(std::memory_order_relaxed);
+                values[i].z = z.load(std::memory_order_relaxed);
+                var_to_inc->store(i + 1, std::memory_order_relaxed);
+                std::this_thread::yield();
+            }
+        };
+        auto read_vals = [&](read_values* values) {
+            while (!go)
+                std::this_thread::yield();
+            for (unsigned int i = 0; i < loop_count; i++) {
+                values[i].x += x.load(std::memory_order_relaxed);
+                values[i].y += y.load(std::memory_order_relaxed);
+                values[i].z += z.load(std::memory_order_relaxed);
+                std::this_thread::yield();
+            }
+        };
+        auto print = [](read_values* v) {
+            for (unsigned int i = 0; i < loop_count; i++) {
+                if (i)
+                    std::cout << ",";
+                std::cout << "(" << v[i].x << "," << v[i].y << "," << v[i].z << ")";
+            }
+            std::cout << std::endl;
+        };
+
+        std::thread t1(increment, &x, values1);
+        std::thread t2(increment, &y, values2);
+        std::thread t3(increment, &z, values3);
+        std::thread t4(read_vals, values4);
+        std::thread t5(read_vals, values5);
+        go = true;
+        t5.join(); t4.join(); t3.join(); t2.join(); t1.join();
+
+        print(values1);
+        print(values2);
+        print(values3);
+        print(values4);
+        print(values5);
+    }
+
     std::cout << "-------------------------------------------------------" << std::endl << std::endl;
 }
 
