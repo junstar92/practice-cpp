@@ -30,7 +30,9 @@ void shared_lock_exam()
         // the reading threads use the `std::shared_lock` in print_number function below
         auto print_number = [&](std::string const& name) {
             std::shared_lock reader_lock(tele_book_mutex);
-            std::cout << name << ": " << tele_book[name];
+            std::cout << name << ": " << tele_book[name]; 
+            // this statement in line 33  has the issue that the call `tele_book[name]` can 
+            // modify the telephone book.
         };
         // The writing threads need exclusive access to the critical section.
         // The exclusivity is given by the `std::lock_guard<std::shared_timed_mutex>>.
