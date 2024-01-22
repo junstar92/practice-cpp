@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(pipelining)
+project(cache_memory)
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -54,14 +54,26 @@ macro(add_benchmark_target _target_name _file)
 endmacro()
 
 add_benchmark_target(
-    superscalar_mbm
-    ${CMAKE_SOURCE_DIR}/01_superscalar.cpp
+    read_mbm
+    ${CMAKE_SOURCE_DIR}/01_read.cpp
 )
 add_benchmark_target(
-    pipelining_mbm
-    ${CMAKE_SOURCE_DIR}/02_pipelining.cpp
+    cache_random_read_mbm
+    ${CMAKE_SOURCE_DIR}/02_cache_random_read.cpp
 )
 add_benchmark_target(
-    branch_mbm
-    ${CMAKE_SOURCE_DIR}/03_branch.cpp
+    cache_random_write_mbm
+    ${CMAKE_SOURCE_DIR}/03_cache_random_write.cpp
+)
+add_benchmark_target(
+    cache_seq_read_mbm
+    ${CMAKE_SOURCE_DIR}/04_cache_sequential_read.cpp
+)
+add_benchmark_target(
+    cache_seq_write_mbm
+    ${CMAKE_SOURCE_DIR}/05_cache_sequential_write.cpp
+)
+add_benchmark_target(
+    list_vector_mbm
+    ${CMAKE_SOURCE_DIR}/06_list_vector.cpp
 )

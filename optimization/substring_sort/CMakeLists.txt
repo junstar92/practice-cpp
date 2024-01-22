@@ -24,8 +24,6 @@ FetchContent_GetProperties(benchmark
     BINARY_DIR BENCHMARK_BINARY_DIR
 )
 
-set(BENCHMARK_INCLUDE_DIR ${BENCHMARK_SOURCE_DIR}/include CACHE STRING "Benchmark include directory" FORCE)
-
 find_library(GPERFTOOLS_PROFILER_LIBRARY profiler)
 
 macro(add_benchmark_target _target_name _file)
