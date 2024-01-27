@@ -69,3 +69,15 @@ add_benchmark_target(
     local_incr_mbm
     ${CMAKE_SOURCE_DIR}/04_local_incr.cpp
 )
+add_benchmark_target(
+    barrier_incr_mbm
+    ${CMAKE_SOURCE_DIR}/05_barrier_incr.cpp
+)
+add_benchmark_target(
+    barrier_load_mbm
+    ${CMAKE_SOURCE_DIR}/06_barrier_load.cpp
+)
+add_benchmark_target(
+    barrier_store_mbm
+    ${CMAKE_SOURCE_DIR}/07_barrier_store.cpp
+)
