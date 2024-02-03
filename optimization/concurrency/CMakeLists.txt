@@ -57,3 +57,15 @@ add_benchmark_target(
     sharing_incr_mbm
     ${CMAKE_SOURCE_DIR}/01_sharing_incr.cpp
 )
+add_benchmark_target(
+    atomic_index_mbm
+    ${CMAKE_SOURCE_DIR}/02_atomic_index.cpp
+)
+add_benchmark_target(
+    ts_unique_ptr_mbm
+    ${CMAKE_SOURCE_DIR}/03_ts_unique_ptr.cpp
+)
+add_benchmark_target(
+    shared_ptr_mbm
+    ${CMAKE_SOURCE_DIR}/04_shared_ptr.cpp
+)
